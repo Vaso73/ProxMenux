@@ -1,0 +1,63 @@
+name: Watch upstream translation source
+
+on:
+  schedule:
+    - cron: "17 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review-needed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find recent upstream English-source changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORK_REPOSITORY: ${{ github.repository }}
+          UPSTREAM_REPOSITORY: MacRimi/ProxMenux
+        run: |
+          set -euo pipefail
+
+          # The 72-hour window tolerates delayed scheduled runs. A matching
+          # open issue is used as the deduplication marker.
+          since="$(date -u -d '72 hours ago' +'%Y-%m-%dT%H:%M:%SZ')"
+          commits="$(gh api --paginate \
+            "/repos/${UPSTREAM_REPOSITORY}/commits?sha=develop&path=AppImage/messages/en/common.json&since=${since}&per_page=100" \
+            --jq '.[] | [.sha, .html_url, (.commit.message | split("\n")[0])] | @tsv')"
+
+          if [[ -z "${commits}" ]]; then
+            echo "No recent upstream English i18n changes."
+            exit 0
+          fi
+
+          latest_sha="$(printf '%s\n' "${commits}" | head -n 1 | cut -f1)"
+          short_sha="${latest_sha:0:7}"
+          existing="$(gh issue list --repo "${FORK_REPOSITORY}" --state open \
+            --search "${short_sha} in:title" --json number --jq 'length')"
+
+          if [[ "${existing}" != "0" ]]; then
+            echo "An open translation-review issue already covers ${short_sha}."
+            exit 0
+          fi
+
+          gh label create translation-review --repo "${FORK_REPOSITORY}" \
+            --color 0E8A16 --description "Upstream English text changes to review for Slovak" --force
+
+          body="Recent changes in [upstream develop](https://github.com/${UPSTREAM_REPOSITORY}/tree/develop) modified \`AppImage/messages/en/common.json\`.
+
+          The upstream workflow may fill missing Slovak keys automatically, but this issue is a reminder to review the wording and any related UI change before the next release.
+
+          Commits to review:
+          "
+
+          while IFS=$'\t' read -r sha url subject; do
+            body+="- [${sha:0:7}](${url}) ${subject}"$'\n'
+          done <<< "${commits}"
+
+          gh issue create --repo "${FORK_REPOSITORY}" \
+            --title "i18n review: upstream English source changed (${short_sha})" \
+            --label translation-review \
+            --body "${body}"
