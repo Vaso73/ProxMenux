@@ -69,6 +69,14 @@ ALLOWED_AI_LANGUAGES = (
     'ja', 'zh', 'ko', 'pl', 'nl', 'tr', 'ar',
 )
 
+_AI_BYPASS_EVENTS = frozenset({'backup_complete', 'backup_fail'})
+
+
+def _should_bypass_ai(event_type: str) -> bool:
+    """Keep authoritative inventory notifications deterministic."""
+    return event_type in _AI_BYPASS_EVENTS
+
+
 # Keys that contain sensitive data and should be encrypted
 SENSITIVE_KEYS = {
     'ai_api_key',  # Legacy - kept for migration
@@ -1396,11 +1404,9 @@ class NotificationManager:
                 # raw template-formatted notification. Audit Tier 6 —
                 # `_dispatch_to_channels`: AI failure dropped the notification.
                 try:
-                    # Backup reports are authoritative inventories. A model can
-                    # neither be trusted to avoid repeating all guest rows nor to
-                    # preserve every value, so these two events bypass AI entirely.
+                    # Authoritative inventory events bypass AI on every send path.
                     ai_result = None
-                    if event_type not in {'backup_complete', 'backup_fail'}:
+                    if not _should_bypass_ai(event_type):
                         enriched_context = enrich_context_for_ai(
                             title=ch_title,
                             body=ch_body,
@@ -2293,13 +2299,16 @@ class NotificationManager:
                 
                 # Pass channel_type so AI knows whether to append original (email only)
                 channel_ai_config = {**ai_config, 'channel_type': ch_name}
-                ai_result = format_with_ai_full(
-                    title, message, severity, channel_ai_config,
-                    detail_level=detail_level,
-                    use_emojis=use_rich_format
-                )
-                ch_title = ai_result.get('title', title)
-                ch_message = ai_result.get('body', message)
+                if _should_bypass_ai(event_type):
+                    ch_title, ch_message = title, message
+                else:
+                    ai_result = format_with_ai_full(
+                        title, message, severity, channel_ai_config,
+                        detail_level=detail_level,
+                        use_emojis=use_rich_format
+                    )
+                    ch_title = ai_result.get('title', title)
+                    ch_message = ai_result.get('body', message)
                 
                 result = channel.send(ch_title, ch_message, severity, data)
                 results[ch_name] = result
