@@ -928,12 +928,17 @@ class NotificationManager:
         )
 
     def _notification_language(self) -> str:
-        """Resolve the deterministic runtime locale with legacy AI fallback."""
-        return (
-            str(self._config.get('notification_language', '')).strip().lower()
-            or str(self._config.get('ai_language', '')).strip().lower()
-            or 'en'
-        )
+        """Resolve runtime locale, accepting only bundled notification catalogs."""
+        notification_language = str(
+            self._config.get('notification_language', '')
+        ).strip().lower()
+        if notification_language in ('en', 'sk'):
+            return notification_language
+
+        legacy_ai_language = str(self._config.get('ai_language', '')).strip().lower()
+        if legacy_ai_language in ('en', 'sk'):
+            return legacy_ai_language
+        return 'en'
 
     def _build_ai_config(self) -> Dict[str, Any]:
         """Build the shared AI config passed to notification rewriters."""
@@ -944,7 +949,7 @@ class NotificationManager:
             'ai_provider': ai_provider,
             'ai_api_key': ai_api_key,
             'ai_model': self._active_ai_model(ai_provider),
-            'ai_language': self._notification_language(),
+            'ai_language': self._config.get('ai_language', 'en'),
             'ai_ollama_url': self._config.get('ai_ollama_url', ''),
             # `ai_openai_base_url` was previously dropped from this dict and
             # the downstream `notification_templates.AIRewriter` read it from

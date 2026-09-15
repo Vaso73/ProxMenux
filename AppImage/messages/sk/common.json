@@ -5408,6 +5408,7 @@
             "services": "Systémové služby",
             "health": "Stav systému",
             "updates": "Systémové aktualizácie",
+            "system": "Systém",
             "hardware": "Hardvér",
             "other": "Systémová notifikácia"
           },

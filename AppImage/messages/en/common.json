@@ -5474,6 +5474,7 @@
             "services": "System Services",
             "health": "Health Monitor",
             "updates": "System Updates",
+            "system": "System",
             "hardware": "Hardware",
             "other": "System Notification"
           },
