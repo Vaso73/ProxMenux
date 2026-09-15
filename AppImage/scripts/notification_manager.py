@@ -62,6 +62,13 @@ DB_PATH = Path('/usr/local/share/proxmenux/health_monitor.db')
 SETTINGS_PREFIX = 'notification.'
 ENCRYPTION_KEY_FILE = Path('/usr/local/share/proxmenux/.notification_key')
 
+# AI output locales offered by the UI or retained for backward compatibility.
+# Runtime notification catalogs remain deliberately limited to English/Slovak.
+ALLOWED_AI_LANGUAGES = (
+    'en', 'sk', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'sv', 'no',
+    'ja', 'zh', 'ko', 'pl', 'nl', 'tr', 'ar',
+)
+
 # Keys that contain sensitive data and should be encrypted
 SENSITIVE_KEYS = {
     'ai_api_key',  # Legacy - kept for migration
@@ -2867,16 +2874,12 @@ class NotificationManager:
                 # the response language). Without validation a soft prompt
                 # injection lands in the system prompt verbatim. Audit Tier 3.2 #4.
                 _ALLOWED_DETAIL_LEVELS = ('brief', 'standard', 'detailed')
-                _ALLOWED_AI_LANGUAGES = (
-                    'en', 'sk', 'es', 'fr', 'de', 'it', 'pt', 'ru',
-                    'ja', 'zh', 'ko', 'pl', 'nl', 'tr', 'ar',
-                )
                 if short_key.endswith('.ai_detail_level') or short_key == 'ai_detail_level':
                     if str(value) not in _ALLOWED_DETAIL_LEVELS:
                         raise ValueError(f"Invalid ai_detail_level: must be one of {_ALLOWED_DETAIL_LEVELS}")
                 if short_key == 'ai_language':
-                    if str(value) not in _ALLOWED_AI_LANGUAGES:
-                        raise ValueError(f"Invalid ai_language: must be one of {_ALLOWED_AI_LANGUAGES}")
+                    if str(value) not in ALLOWED_AI_LANGUAGES:
+                        raise ValueError(f"Invalid ai_language: must be one of {ALLOWED_AI_LANGUAGES}")
                 if short_key == 'notification_language' and str(value) not in ('en', 'sk'):
                     raise ValueError("Invalid notification_language: must be one of ('en', 'sk')")
 

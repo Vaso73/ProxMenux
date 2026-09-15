@@ -1705,6 +1705,12 @@
         "updates": {
           "label": "Updates"
         },
+        "hardware": {
+          "label": "Hardware"
+        },
+        "system": {
+          "label": "System"
+        },
         "other": {
           "label": "Other"
         }
@@ -5430,6 +5436,7 @@
           "health": "Health",
           "updates": "Updates",
           "hardware": "Hardware",
+          "system": "System",
           "other": "Other"
         }
       },

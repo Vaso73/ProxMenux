@@ -1705,6 +1705,12 @@
         "updates": {
           "label": "Aktualizácie"
         },
+        "hardware": {
+          "label": "Hardvér"
+        },
+        "system": {
+          "label": "Systém"
+        },
         "other": {
           "label": "Ostatné"
         }
@@ -5364,6 +5370,7 @@
           "health": "Stav systému",
           "updates": "Aktualizácie",
           "hardware": "Hardvér",
+          "system": "Systém",
           "other": "Ostatné"
         }
       },
