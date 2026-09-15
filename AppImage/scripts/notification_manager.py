@@ -1636,7 +1636,6 @@ class NotificationManager:
             'digest.title', language, hostname=host,
             timestamp=now.strftime('%Y-%m-%d %H:%M'),
         )
-        )
 
         try:
             conn = sqlite3.connect(str(DB_PATH), timeout=10)
@@ -1876,7 +1875,6 @@ class NotificationManager:
         summary_title = runtime_message(
             'digest.quietTitle', self._notification_language(),
             hostname=host, count=len(rows),
-        )
         )
         summary_body = self._compose_digest_body(rows)
 
