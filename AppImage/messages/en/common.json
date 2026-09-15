@@ -1810,7 +1810,9 @@
         "post_install_update": "ProxMenux optimization updates available",
         "secure_gateway_update_available": "Secure Gateway update available",
         "nvidia_driver_update_available": "NVIDIA driver update available",
-        "coral_driver_update_available": "Coral TPU driver update available"
+        "coral_driver_update_available": "Coral TPU driver update available",
+        "lxc_update_applied": "LXC update applied",
+        "docker_stack_update_available": "Docker updates available"
       },
       "ui": {
         "quietHours": "Quiet hours",
@@ -5178,11 +5180,6 @@
           "title": "{hostname}: System problem detected{entity_suffix}",
           "body": "A system-level problem has been detected.\nReason: {reason}",
           "label": "System problem detected"
-        },
-        "kernel_warning": {
-          "title": "{hostname}: Kernel diagnostic event detected",
-          "body": "The kernel recorded a diagnostic event.\n{kernel_details}",
-          "label": "Kernel warnings and diagnostic traces"
         },
         "service_fail": {
           "title": "{hostname}: Service failed — {service_name}",

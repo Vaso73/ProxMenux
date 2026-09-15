@@ -1810,7 +1810,9 @@
         "secure_gateway_update_available": "K dispozícii je aktualizácia Secure Gateway",
         "nvidia_driver_update_available": "Dostupná aktualizácia ovládača NVIDIA",
         "coral_driver_update_available": "Dostupná aktualizácia ovládača Coral TPU",
-        "app_update_available": "K dispozícii je aktualizácia aplikácie"
+        "app_update_available": "K dispozícii je aktualizácia aplikácie",
+        "lxc_update_applied": "Aktualizácia LXC použitá",
+        "docker_stack_update_available": "Dostupné aktualizácie Docker"
       },
       "ui": {
         "quietHours": "Tiché hodiny",
@@ -5112,11 +5114,6 @@
           "title": "{hostname}: Zistený systémový problém{entity_suffix}",
           "body": "Bol zistený problém na úrovni systému.\nDôvod: {reason}",
           "label": "Zistený problém so systémom"
-        },
-        "kernel_warning": {
-          "title": "{hostname}: Zistená diagnostická udalosť jadra",
-          "body": "Jadro zaznamenalo diagnostickú udalosť.\n{kernel_details}",
-          "label": "Upozornenia a diagnostické stopy jadra"
         },
         "service_fail": {
           "title": "{hostname}: Služba zlyhala — {service_name}",
