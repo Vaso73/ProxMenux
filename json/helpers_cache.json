@@ -6034,7 +6034,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -10127,6 +10127,47 @@
     "website": "https://hometube.latentnoise.dev/",
     "documentation": "https://github.com/EgalitarianMonkey/hometube/blob/main/docs/README.md",
     "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/hometube.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Honcho",
+    "slug": "honcho",
+    "desc": "Honcho is an open-source memory server for building stateful AI agents. Applications write the messages of users and agents into workspaces, peers and sessions through a REST API or the Python and TypeScript SDKs; a background deriver has an LLM draw conclusions about every peer, keeps peer cards and session summaries and consolidates them in periodic dreams, and the dialectic chat endpoint answers questions about a peer in natural language. This script runs the FastAPI server and the deriver on Python 3.13 with PostgreSQL 17 (pgvector) and Redis, with JWT authentication switched on. Honcho has no web interface; the interactive API docs are at /docs.",
+    "script": "ct/honcho.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/honcho.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/honcho.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "Authentication is on: every request needs Authorization: Bearer <key>, a JWT signed with AUTH_JWT_SECRET in /opt/honcho_data/.env. The end of the install prints an admin key. Mint more inside the container with cd /opt/honcho && .venv/bin/python scripts/generate_jwt.py --admin (or --workspace <name> [--peer <name>] [--expires 30d] for a scoped one), or with an admin key through POST /v3/keys?workspace_id=<name>&peer_id=<name>. Keys without --expires never expire; changing AUTH_JWT_SECRET and restarting revokes all of them.",
+      "Ollama: set var_honcho_base_url=http://<ollama-ip>:11434/v1, var_honcho_model to a model with tool calling (e.g. qwen3:8b), var_honcho_embedding_model=nomic-embed-text and var_honcho_embedding_dims=768, and let Ollama listen on the network (OLLAMA_HOST=0.0.0.0). OpenRouter, vLLM and LiteLLM work the same way with their own key; endpoints without embeddings (e.g. Groq) need EMBEDDING_MODEL_CONFIG__OVERRIDES__BASE_URL and EMBEDDING_MODEL_CONFIG__OVERRIDES__API_KEY for another embedding endpoint. If the deriver logs structured output errors, set DERIVER_MODEL_CONFIG__STRUCTURED_OUTPUT_MODE=json_object.",
+      "The deriver batches work: it calls the LLM once a peer has about 512 new tokens, or after 30 minutes. DERIVER_FLUSH_ENABLED=true in /opt/honcho_data/.env processes every message right away, at the cost of more LLM calls. Logs: journalctl -u honcho -u honcho-deriver.",
+      "Clients: pip install honcho-ai and Honcho(base_url=\"http://<IP>:8000\", api_key=\"<key>\", workspace_id=\"<name>\"), or the TypeScript @honcho-ai/sdk with baseURL and apiKey; both also read HONCHO_URL and HONCHO_API_KEY. The hosted MCP server at mcp.honcho.dev only reaches Honcho's cloud; for this instance run the mcp/ server from the Honcho repository with bun and HONCHO_API_URL=http://<IP>:8000.",
+      "All data is in the PostgreSQL database honcho; /opt/honcho_data/.env holds the database password and the JWT secret, so back up both. Redis is only a cache. Updates replace /opt/honcho and run the database migrations. The two processes use about 600 MB of RAM when idle."
+    ],
+    "warnings": [
+      "Honcho needs an LLM provider: the deriver, summaries, dreams and dialectic chat call a chat model, and every message gets embedded. Without a key the API would start but reject every new message, so the install leaves honcho and honcho-deriver stopped. Pass var_honcho_api_key (and var_honcho_provider), or fill in the key in /opt/honcho_data/.env afterwards (for Anthropic or Gemini also switch the *_TRANSPORT and *_MODEL lines there) and run systemctl enable --now honcho honcho-deriver.",
+      "The vector size is fixed once the first message is embedded. To switch to an embedding model of another size later, set EMBEDDING_VECTOR_DIMENSIONS while the database still holds no embeddings and run cd /opt/honcho && .venv/bin/python scripts/configure_embeddings.py --yes; on a populated instance upstream only offers a new deployment.",
+      "Port 8000 is plain HTTP and /docs, /openapi.json and /health answer without a key. Put a reverse proxy with TLS in front before exposing Honcho beyond the LAN."
+    ],
+    "port": 8000,
+    "website": "https://honcho.dev/",
+    "documentation": "https://honcho.dev/docs/v3/contributing/self-hosting",
+    "logo": "https://cdn.jsdelivr.net/gh/plastic-labs/honcho@main/docs/favicon.svg",
     "updateable": true,
     "privileged": false,
     "has_arm": false,
@@ -16918,7 +16959,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
