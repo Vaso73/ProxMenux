@@ -7945,6 +7945,46 @@
     "os": "debian"
   },
   {
+    "name": "FreeScout",
+    "slug": "freescout",
+    "desc": "FreeScout is a self-hosted help desk and shared mailbox, an open-source alternative to Zendesk and Help Scout. It turns support email into conversations that agents assign, tag and answer together, with saved replies, internal notes, collision detection and customer history. Modules add features like a knowledge base, satisfaction ratings and workflows.",
+    "script": "ct/freescout.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/freescout.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/freescout.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00025"
+    ],
+    "category_names": [
+      "Business & ERP"
+    ],
+    "notes": [
+      "Sign in with the admin email and the generated password saved in ~/freescout.creds inside the container.",
+      "Mail servers on private IPs are rejected until listed in APP_REMOTE_HOST_WHITE_LIST in /opt/freescout/.env (clear the cache afterwards)."
+    ],
+    "warnings": [
+      "FreeScout only answers on the host in APP_URL (the container IP). For a domain or reverse proxy, change APP_URL in /opt/freescout/.env, then click Clear Cache under Manage > System > Tools."
+    ],
+    "port": 80,
+    "website": "https://freescout.net/",
+    "documentation": "https://github.com/freescout-help-desk/freescout/wiki",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/freescout.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin@example.com",
+      "password": ""
+    },
+    "os": "debian"
+  },
+  {
     "name": "FreshRSS",
     "slug": "freshrss",
     "desc": "FreshRSS is a self-hosted RSS and Atom feed aggregator that lets users collect, organize, and read from multiple sources in one place. It is lightweight, easy to work with, powerful, and customizable.",
@@ -23487,6 +23527,45 @@
       "pve"
     ],
     "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "SUB/WAVE",
+    "slug": "subwave",
+    "desc": "SUB/WAVE turns your own music library into a self-hosted internet radio station. An AI DJ picks the tracks from Navidrome, talks between them with a local or cloud voice and runs shows, jingles and listener requests, while everyone hears the same Icecast stream.",
+    "script": "ct/subwave.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/subwave.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/subwave.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00013"
+    ],
+    "category_names": [
+      "Media & Streaming"
+    ],
+    "notes": [
+      "Open http://<IP>/onboarding and sign in with the admin password from ~/subwave.creds inside the container."
+    ],
+    "warnings": [
+      "SUB/WAVE needs a Navidrome (Subsonic) server with your music and an LLM (Ollama, any OpenAI-compatible server or a cloud API key); the onboarding wizard connects both."
+    ],
+    "port": 80,
+    "website": "https://getsubwave.com/",
+    "documentation": "https://getsubwave.com/manual",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/sub-wave.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin",
+      "password": ""
+    },
     "os": "debian"
   },
   {
