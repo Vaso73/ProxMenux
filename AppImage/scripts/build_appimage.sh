@@ -201,6 +201,24 @@ cp "$SCRIPT_DIR/proxmox_known_errors.py" "$APP_DIR/usr/bin/" 2>/dev/null || echo
 cp "$SCRIPT_DIR/ai_context_enrichment.py" "$APP_DIR/usr/bin/" 2>/dev/null || echo "⚠️  ai_context_enrichment.py not found"
 cp "$SCRIPT_DIR/startup_grace.py" "$APP_DIR/usr/bin/" 2>/dev/null || echo "⚠️  startup_grace.py not found"
 cp "$SCRIPT_DIR/flask_notification_routes.py" "$APP_DIR/usr/bin/" 2>/dev/null || echo "⚠️  flask_notification_routes.py not found"
+cp "$SCRIPT_DIR/create_access.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/create_catalog.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/create_oci_engine.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/flask_create_routes.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/native_lxc.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/native_lxc_jobs.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/native_lxc_pve.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/native_lxc_policy.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/native_lxc_activation.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/lxc_template_compat.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/lxc_template_archive.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/lxc_template_mtu.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/pve_task_status.py" "$APP_DIR/usr/bin/"
+cp "$SCRIPT_DIR/native_lxc_pve_bridge.pl" "$APP_DIR/usr/bin/"
+# The matching maintained OCI engine is installed by ProxMenux separately.
+# A browser GET never downloads or repairs that package.
+mkdir -p "$APP_DIR/usr/share/proxmenux/catalog"
+cp "$APPIMAGE_ROOT/../json/helpers_cache.json" "$APP_DIR/usr/share/proxmenux/catalog/helpers_cache.json"
 # Backend notification rendering reuses the canonical Monitor catalogs.
 # Keep every supported locale in the bundle so the runtime selector and its
 # fallback behavior exactly match the Monitor UI.

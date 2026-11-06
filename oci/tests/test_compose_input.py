@@ -13,6 +13,17 @@ from proxmenux_oci.custom import template_from_compose, _dump
 
 
 class ComposeInputs(unittest.TestCase):
+    def test_web_companions_use_supplied_contents_and_never_host_file_reads(self):
+        class UI:
+            definition_input = True
+            def definition_file(self, name, **kwargs):
+                return {'.env': 'VERSION=alpine\n', 'app.env': 'SYNTHETIC_VALUE=content\n'}[name]
+        doc = {'services': {'app': {'image': 'nginx:${VERSION}', 'env_file': 'app.env'}}}
+        with patch.object(Path, 'read_bytes', side_effect=AssertionError('host file read')):
+            result = prepare(UI(), doc, '/etc')
+        self.assertEqual(result['services']['app']['image'], 'nginx:alpine')
+        self.assertEqual(result['services']['app']['environment']['SYNTHETIC_VALUE'], 'content')
+
     def test_default_required_alternative_nested_and_escaped_dollar(self):
         expand = Interpolator({'EMPTY': '', 'SET': 'value'}).expand
         for source, expected in [

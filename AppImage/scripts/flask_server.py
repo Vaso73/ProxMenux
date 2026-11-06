@@ -94,9 +94,10 @@ from flask_auth_routes import auth_bp  # noqa: E402
 from flask_proxmenux_routes import proxmenux_bp  # noqa: E402
 from flask_pbs_routes import pbs_bp  # noqa: E402
 from flask_monitor_links_routes import monitor_links_bp  # noqa: E402
-from pbs_manager import get_platform, is_pbs_host  # noqa: E402
+from pbs_manager import get_platform, get_cached_platform, is_pbs_host  # noqa: E402
 from flask_security_routes import security_bp  # noqa: E402
 from flask_notification_routes import notification_bp  # noqa: E402
+from flask_create_routes import create_bp  # noqa: E402
 from flask_oci_routes import oci_bp  # noqa: E402
 from flask_audit_routes import audit_bp  # noqa: E402
 from flask_vm_backup_routes import vm_backup_bp  # noqa: E402
@@ -159,6 +160,7 @@ def get_proxmox_node_name() -> str:
 # Flask application and Blueprints
 # -------------------------------------------------------------------
 app = Flask(__name__)
+app.config["CREATE_OCI_PROFILE_PLATFORM"] = lambda: get_cached_platform().get("product")
 # DoS / cost-amplification cap (audit Tier 3.1 — sin body-size cap en POSTs).
 # Without this an authenticated client could POST a 100 MB body to /api/notifications/test-ai
 # (or any other AI endpoint) and stall the dispatch thread plus rack up real
@@ -205,6 +207,7 @@ app.register_blueprint(pbs_bp)
 app.register_blueprint(monitor_links_bp)
 app.register_blueprint(security_bp)
 app.register_blueprint(notification_bp)
+app.register_blueprint(create_bp)
 app.register_blueprint(oci_bp)
 app.register_blueprint(audit_bp)
 app.register_blueprint(vm_backup_bp)

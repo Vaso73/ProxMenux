@@ -13,6 +13,7 @@ from typing import Any
 
 from . import console, images
 from .catalog import Catalog
+from .catalog_selection import installable as _catalog_installable
 from .converter import ConversionError
 from .github_source import SourceError
 from .i18n import N_, diagnostic, source_text, translate
@@ -74,7 +75,7 @@ TESTED_LABEL = r"\Z2✓\Zn"
 
 
 def _installable(applications: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [item for item in applications if not item.get("hidden") and item.get("automatic_install_candidate")]
+    return _catalog_installable(applications)
 
 
 NAME_WIDTH, ARCH_WIDTH, SOURCE_WIDTH = 26, 12, 14
@@ -434,7 +435,7 @@ def install_template(ui, template: dict[str, Any], identifier: str, mode: str) -
                 deployment["watchdog"] = wizard.confirm(
                     translate("Put this application under watchdog? It is restarted automatically when it crashes."),
                     watchdog_default(candidate))
-                approved = wizard.review(_deployment_summary_text(candidate, deployment),
+                approved = wizard.installation_review(_deployment_summary_text(candidate, deployment),
                                          translate("Installation summary"),
                                          question=translate("Install with this configuration?"))
                 break
@@ -479,7 +480,7 @@ def install_template(ui, template: dict[str, Any], identifier: str, mode: str) -
     return result
 
 
-def _rclone_mount(catalog: Catalog, ui) -> None:
+def _rclone_mount(catalog: Catalog, ui):
     template = catalog.compose("rclone")
     deployment = build_rclone_mount_deployment(template, ui)
     console.show_logo()
@@ -492,6 +493,7 @@ def _rclone_mount(catalog: Catalog, ui) -> None:
         console.msg_ok(f"{translate('Read/write')}: {result['read_write_path']}")
         console.msg_ok(f"{translate('Read-only')}: {result['read_only_path']}")
     console.wait_for_enter(translate("Press Enter to return to the menu..."))
+    return result
 
 
 def _app_detail(catalog: Catalog, ui, item: dict[str, Any]) -> None:

@@ -179,6 +179,9 @@ def resolve_document(document, project=None, env_files=None, missing=None):
 def prepare(ui, document, directory=None, *, metadata=None):
     """Read companion files explicitly, then ask once for each missing value."""
     directory = Path(directory) if directory is not None else None
+    loader = getattr(ui, 'definition_file', None) if getattr(ui, 'definition_input', False) is True else None
+    if callable(loader):
+        directory = None
     cache = {}
     entered = {}
 
@@ -207,9 +210,15 @@ def prepare(ui, document, directory=None, *, metadata=None):
         cache['.env'] = read(default)
         resolver.values.update({k: v for k, v in dotenv(cache['.env'], resolver).items() if v is not None})
     elif re.search(r'\$(?:\{|[A-Za-z_])', yaml.safe_dump(document)):
-        path = ui.ask(translate('Project environment file (.env), or leave empty to enter values'), '', required=False)
-        if path:
-            cache['.env'] = read(path)
+        if callable(loader):
+            contents = loader('.env', limit=LIMIT, required=False)
+            if contents:
+                cache['.env'] = contents
+        else:
+            path = ui.ask(translate('Project environment file (.env), or leave empty to enter values'), '', required=False)
+            if path:
+                cache['.env'] = read(path)
+        if '.env' in cache:
             resolver.values.update({k: v for k, v in dotenv(cache['.env'], resolver).items() if v is not None})
     for service in document.get('services', {}).values():
         files = service.get('env_file', []) if isinstance(service, dict) else []
@@ -232,6 +241,11 @@ def prepare(ui, document, directory=None, *, metadata=None):
             if type(required) is not bool:
                 raise ConversionError(translate('Unresolved variable:') + ' env_file.required')
             if not required:
+                continue
+            if callable(loader):
+                contents = loader(filename, limit=LIMIT, required=required)
+                if contents:
+                    cache[filename] = contents
                 continue
             path = ui.ask(translate('Path of environment file') + ': ' + filename,
                           str(candidate or filename), required=required)

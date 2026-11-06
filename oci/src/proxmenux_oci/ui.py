@@ -101,8 +101,15 @@ class BacktrackUI:
         return self._call('detail_menu', *args, **kwargs)
 
     def review(self, *args, **kwargs):
+        return self._review(self.base.review, *args, **kwargs)
+
+    def installation_review(self, *args, **kwargs):
+        """The execution boundary, distinct from a definition preview."""
+        return self._review(getattr(self.base, 'installation_review', self.base.review), *args, **kwargs)
+
+    def _review(self, reviewer, *args, **kwargs):
         try:
-            return self.base.review(*args, **kwargs)
+            return reviewer(*args, **kwargs)
         except BackRequested:
             if self.cursor:
                 self.answers = self.answers[:self.cursor - 1]

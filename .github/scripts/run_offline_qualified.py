@@ -13,6 +13,26 @@ import sys
 import tempfile
 
 PYTHON_FILES = (
+    "oci/tests/test_catalog_selection.py",
+    "oci/tests/test_compose_input.py",
+    "oci/tests/test_custom_registry_transport.py",
+    "oci/tests/test_web_manager.py",
+    "oci/tests/test_web_wizard.py",
+    "tests/test_lxc_template_compat.py",
+    "tests/test_native_lxc.py",
+    "tests/test_native_lxc_acl.py",
+    "tests/test_native_lxc_ha.py",
+    "tests/test_native_lxc_policy.py",
+    "tests/test_native_lxc_jobs.py",
+    "tests/test_native_lxc_pve.py",
+    "tests/test_native_lxc_session.py",
+    "tests/test_native_lxc_routes.py",
+    "tests/test_installation_catalog.py",
+    "tests/test_oci_manager_routes.py",
+    "AppImage/scripts/tests/test_create_catalog_routes.py",
+    "tests/test_create_access.py",
+    "tests/test_create_preview_scope.py",
+
     "tests/test_host_update_jobs.py",
     "tests/test_host_update_transport.py",
     "tests/test_host_update_shell.py",
@@ -43,6 +63,11 @@ PYTHON_FILES = (
     "AppImage/scripts/tests/test_health_persistence_recurrence.py",
 )
 NODE_FILES = (
+    "tests/test_native_lxc.cjs",
+    "tests/test_oci_manager_settings.cjs",
+    "tests/test_create_readonly.cjs",
+    "tests/test_unified_catalog_ui.cjs",
+
     "tests/test_host_update_ui.cjs",
     "tests/test_reboot_health_refresh.cjs",
     "tests/test_host_update_controls.cjs",

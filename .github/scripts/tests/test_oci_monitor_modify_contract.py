@@ -19,9 +19,11 @@ STACK_RECREATION = ROOT / 'oci/src/proxmenux_oci/stack_recreation.py'
 def extracted_stack_manager(scope):
     source = MENU.read_text(encoding='utf-8').replace(
         '            from .stack_recreation import modify_stack\n', '')
-    node = next(item for item in ast.parse(source).body
+    nodes = ast.parse(source).body
+    helper = next(item for item in nodes if isinstance(item, ast.FunctionDef) and item.name == 'stack_update_supported')
+    node = next(item for item in nodes
                 if isinstance(item, ast.FunctionDef) and item.name == '_manage_stack')
-    exec(compile(ast.fix_missing_locations(ast.Module(body=[node], type_ignores=[])),
+    exec(compile(ast.fix_missing_locations(ast.Module(body=[helper, node], type_ignores=[])),
                  str(MENU), 'exec'), scope)
     return scope['_manage_stack']
 

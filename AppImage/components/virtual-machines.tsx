@@ -23,6 +23,7 @@ import { MetricsView } from "./metrics-dialog"
 import { LxcTerminalModal } from "./lxc-terminal-modal"
 import { ScriptTerminalModal } from "./script-terminal-modal"
 import { LxcUpdateJobs } from "./lxc-update-jobs"
+import { CreateWorkloads } from "./create-workloads"
 import { markUpdateJobViewed, type LxcUpdateJob } from "../lib/lxc-update-jobs"
 import { OCI_CANCELLED_EXIT_CODE, shouldRefreshOciAfterCompletion } from "@/lib/script-completion"
 import { LxcAppPanel, ThemeAwareLogo, ociImageLabel } from "./lxc-app-panel"
@@ -3343,7 +3344,8 @@ export function VirtualMachines() {
             {t("vmLxc.listTitle")}
           </CardTitle>
           <div className="flex w-full flex-col gap-2 xl:w-auto xl:items-end">
-            <div className="flex w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-center xl:flex-nowrap">
+            <div className="flex w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
+              <CreateWorkloads />
               <div className="relative w-full md:w-72">
                 <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input

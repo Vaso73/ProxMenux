@@ -8,9 +8,11 @@ on:
       - '.github/ci/offline-node/**'
       - 'CONTRIBUTING.md'
       - 'tests/**'
+      - 'oci/**'
       - 'AppImage/package.json'
       - 'AppImage/package-lock.json'
       - 'AppImage/scripts/*.py'
+      - 'AppImage/scripts/native_lxc_pve_bridge.pl'
       - 'AppImage/scripts/tests/test_health_persistence_recurrence.py'
       - 'AppImage/scripts/tests/test_native_app_discovery.py'
       - 'AppImage/scripts/tests/test_local_app_icons.py'
@@ -34,9 +36,11 @@ on:
       - '.github/ci/offline-node/**'
       - 'CONTRIBUTING.md'
       - 'tests/**'
+      - 'oci/**'
       - 'AppImage/package.json'
       - 'AppImage/package-lock.json'
       - 'AppImage/scripts/*.py'
+      - 'AppImage/scripts/native_lxc_pve_bridge.pl'
       - 'AppImage/scripts/tests/test_health_persistence_recurrence.py'
       - 'AppImage/scripts/tests/test_native_app_discovery.py'
       - 'AppImage/scripts/tests/test_local_app_icons.py'
@@ -74,7 +78,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install native discovery route fixture dependency
-        run: python3 -m pip install 'Flask>=3,<4' 'Pillow==12.3.0' 'defusedxml==0.7.1' 'PyJWT>=2,<3' 'gevent>=25,<27' 'flask-sock==0.7.0' requests
+        run: python3 -m pip install 'Flask>=3,<4' 'Pillow==12.3.0' 'defusedxml==0.7.1' 'PyJWT>=2,<3' 'gevent>=25,<27' 'flask-sock==0.7.0' requests 'PyYAML>=6,<7' 'jsonschema==4.25.1'
+      - name: Install archive codec for real template fixtures
+        run: sudo apt-get update && sudo apt-get install -y zstd
       - name: Run qualified Python files
         env:
           PYTHONDONTWRITEBYTECODE: '1'

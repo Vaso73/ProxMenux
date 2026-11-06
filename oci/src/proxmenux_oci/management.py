@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from contextlib import nullcontext
 
 from . import images
 from .i18n import N_, source_text, translate
@@ -69,11 +70,11 @@ def inventory(project, progress=None):
                 for d in decisions if d['action'] == 'keep']
 
 
-def saved_inventory(project):
+def saved_inventory(project, *, read_only=False):
     """Open the selector without invoking Proxmox or changing saved contracts."""
     sys.path.insert(0, str(project / 'remote'))
     import oci_instances as instances
-    with instances.locked(instances.ROOT):
+    with nullcontext() if read_only else instances.locked(instances.ROOT):
         rows = []
         for directory in sorted(instances.ROOT.iterdir(), key=lambda path: path.name.zfill(10)):
             if not (directory.name.isdecimal() and instances.has_contract(instances.ROOT, int(directory.name))
@@ -238,7 +239,7 @@ def offer_recovery(project, ui):
     if ui.confirm(translate('Start the applications once they are registered? Answer No if the original containers are still running on another host: both would use the same addresses.'),
                   default=False):
         command.append('--start')
-    _run_lifecycle(command, translate('Recover restored OCI applications'))
+    return _run_lifecycle(command, translate('Recover restored OCI applications'))
 
 
 def direct_recovery(project):
@@ -411,6 +412,8 @@ def manage_instance(project, ui, row, action=None, lifecycle_args=(), heading=No
     shown = {'shown': True, 'heading': heading, 'message': translate('Checking the container...')} if heading else {}
     # A container that came back from another node or from an older backup
     # carries the record that describes it; the one of this host is not used.
+    if getattr(ui, 'requires_management_review', False) is True and not ui.prepare_management(row['vmid']):
+        return False
     if carry_records(project, vmids=[row['vmid']], verify=True, **shown).get(row['vmid']) == 'stale':
         ui.message(translate('This container was restored or came back from another host after its record on this host was written. Open this menu again to recover it; the container was not modified.'),
                    translate('OCI management'))
@@ -605,6 +608,17 @@ def _remove(project, ui, vmid):
                           translate('Remove OCI'))
 
 
+def stack_update_supported(primary):
+    """The same replay gate for the Menu and its read-only web projection."""
+    import oci_stack_replay
+    members = primary.get('stack', {}).get('members', [])
+    needs_replay = any(m.get('native_stack_intent') or
+        m.get('deployment', {}).get('rootfs_adaptation_replay_required') for m in members)
+    return bool(members) and (not needs_replay or any(check(primary) for check in (
+        oci_stack_replay.nextcloud_menu_ready, oci_stack_replay.paperless_menu_ready,
+        oci_stack_replay.tandoor_menu_ready, oci_stack_replay.immich_menu_ready)))
+
+
 def _manage_stack(project, ui, row, action=None, lifecycle_args=()):
     sys.path.insert(0, str(project / 'remote'))
     import oci_instances as instances
@@ -614,17 +628,10 @@ def _manage_stack(project, ui, row, action=None, lifecycle_args=()):
     pending = primary.get('pending_stack_transaction')
     if not pending:
         members = primary.get('stack', {}).get('members', [])
-        import oci_stack_replay
-        needs_replay = any(m.get('native_stack_intent') or
-                m.get('deployment', {}).get('rootfs_adaptation_replay_required') for m in members)
         if not members:
             ui.message(translate('This stack has no saved members to update.'), translate('OCI stack management'))
             return False
-        updatable = not needs_replay or (
-                oci_stack_replay.nextcloud_menu_ready(primary) or
-                oci_stack_replay.paperless_menu_ready(primary) or
-                oci_stack_replay.tandoor_menu_ready(primary) or
-                oci_stack_replay.immich_menu_ready(primary))
+        updatable = stack_update_supported(primary)
         if not updatable and action in (None, 'update'):
             ui.message(translate('This stack needs rootfs adaptations that coordinated updates cannot replay yet.'), translate('OCI stack management'))
             if action == 'update':

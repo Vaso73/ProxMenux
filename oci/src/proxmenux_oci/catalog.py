@@ -58,10 +58,13 @@ def is_multi_container(template: dict[str, Any]) -> bool:
 
 class Catalog:
     def __init__(self, root: Path, source: GitHubSource | None = None, *,
-                 catalog_dir: Path | None = None) -> None:
+                 catalog_dir: Path | None = None, read_only: bool = False) -> None:
         self.root = root
-        from .catalog_refresh import pin_catalog
-        self.catalog_dir, lease = pin_catalog(root, catalog_dir)
+        from .catalog_refresh import current_catalog, pin_catalog
+        # Web inspection must not create cache/lease files. A concurrently
+        # pruned snapshot fails the read instead of bootstrapping a new one.
+        # The Menu keeps its original leased reader by default.
+        self.catalog_dir, lease = ((Path(catalog_dir) if catalog_dir is not None else current_catalog(root)), None) if read_only else pin_catalog(root, catalog_dir)
         if lease is not None:
             self._snapshot_lease = weakref.finalize(self, lease.close)
         self._include_local = catalog_dir is None and self.catalog_dir != root / "catalog"

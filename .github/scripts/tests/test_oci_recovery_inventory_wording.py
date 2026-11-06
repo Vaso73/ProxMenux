@@ -29,7 +29,10 @@ TRANSACTION = ROOT / 'oci/remote/oci_stack_transaction.py'
 
 
 def extracted(path, name, scope):
+    if name == '_manage_stack':
+        extracted(path, 'stack_update_supported', scope)
     if name == 'remove':
+        extracted(ROOT / 'oci/remote/oci_installation_state.py', 'parse_config', scope)
         # Operational cache cleanup is exercised by the engine tests; keep wording tests inert.
         scope.setdefault('compose_jobs', SimpleNamespace(forget_completed=lambda *args: None))
         scope.setdefault('public_routes', SimpleNamespace(remove=lambda *args: None))

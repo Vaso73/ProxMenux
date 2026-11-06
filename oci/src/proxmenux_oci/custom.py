@@ -26,6 +26,14 @@ from .i18n import N_, translate
 from .registry_auth import RegistryError, refuses_access, validate_image
 from .ui import UserCancelled
 
+
+def _offer_sign_in(ui, reference, title=None):
+    # Definition checks use existing accounts; changing an account is separate.
+    if not getattr(ui, 'allow_registry_sign_in', True):
+        return False
+    from .registry_accounts import offer_sign_in
+    return offer_sign_in(ui, reference, title) if title else offer_sign_in(ui, reference)
+
 def _valid_image_reference(reference: str) -> bool:
     try:
         validate_image(reference)
@@ -269,8 +277,7 @@ def enrich_image_defaults(ui, document: dict[str, Any], *, image_entrypoints: di
             command = ['skopeo', 'inspect', '--config', f'docker://{_registry_lookup(reference)}']
             result = subprocess.run(command, capture_output=True, text=True, check=False, timeout=120)
             if result.returncode and _registry_refused(reference):
-                from .registry_accounts import offer_sign_in
-                if offer_sign_in(ui, reference, translate('Image that is not in the catalog')):
+                if _offer_sign_in(ui, reference, translate('Image that is not in the catalog')):
                     result = subprocess.run(command, capture_output=True, text=True, check=False, timeout=120)
             if result.returncode:
                 raise ConversionError(f"{translate('The image could not be read from its registry:')} {reference}")
@@ -589,6 +596,11 @@ def describe_oci_compose(template: dict[str, Any]) -> str:
 def _read_pasted(ui, title: str | None = None, limit: int = MAX_COMPOSE_BYTES, missing: str | None = None) -> str:
     """The definition is pasted in the terminal: dialog cannot take it. On a
     terminal one Ctrl+D ends it, also at the end of a line that has text."""
+    if getattr(ui, 'definition_input', False) is True and callable(getattr(ui, 'multiline', None)):
+        text = ui.multiline(title or 'Compose', limit=limit)
+        if not text.strip():
+            raise UserCancelled(missing or translate('No Compose file was given'))
+        return text
     console.show_logo()
     console.msg_title(title or translate('Compose file of the application'))
     console.msg_info2(translate('Paste it here and press Ctrl+D.'))
@@ -616,7 +628,7 @@ def read_definition(ui) -> tuple[str, str]:
     oci-compose, named by OCI_COMPOSE."""
     from .cli import MENU_SIZE
     ui._compose_source_dir = None
-    source = ui.choose(translate('How is the image described?'), [
+    options = [
         ('paste', translate('Paste its Compose file in the terminal')),
         ('file', translate('Read its Compose file from a file of this host')),
         ('url', translate('Download its Compose file from an address')),
@@ -625,7 +637,13 @@ def read_definition(ui) -> tuple[str, str]:
         ('oci-compose-paste', translate('Paste an oci-compose in the terminal')),
         ('oci-compose', translate('Read an oci-compose from a file of this host')),
         ('oci-compose-url', translate('Download an oci-compose from an address')),
-    ], 'paste', title=translate('Image that is not in the catalog'), size=MENU_SIZE)
+    ]
+    if (getattr(ui, 'definition_input', False) is True and callable(getattr(ui, 'multiline', None))
+            and getattr(ui, 'all_definition_sources', False) is not True):
+        options = [('paste', 'Compose'), ('run', 'docker run'),
+                   ('image', translate('Image reference')), ('oci-compose-paste', 'oci-compose')]
+    source = ui.choose(translate('How is the image described?'), options,
+                       'paste', title=translate('Image that is not in the catalog'), size=MENU_SIZE)
     if source is None:
         raise UserCancelled(translate('Image selection was cancelled'))
     if source == 'oci-compose-paste':
@@ -635,7 +653,8 @@ def read_definition(ui) -> tuple[str, str]:
         return _read_file(ui.ask(translate('Path of the oci-compose file'), '/root/oci-compose.json'),
                           MAX_OCI_COMPOSE_BYTES), OCI_COMPOSE
     if source == 'oci-compose-url':
-        return _read_url(ui.ask(translate('Address of the oci-compose file'), ''), MAX_OCI_COMPOSE_BYTES), OCI_COMPOSE
+        reader = getattr(ui, 'definition_url', _read_url)
+        return reader(ui.ask(translate('Address of the oci-compose file'), ''), MAX_OCI_COMPOSE_BYTES), OCI_COMPOSE
     if source == 'paste':
         return _read_pasted(ui), translate('pasted Compose file')
     if source == 'file':
@@ -643,7 +662,8 @@ def read_definition(ui) -> tuple[str, str]:
         ui._compose_source_dir = Path(path).expanduser().resolve().parent
         return _read_file(path), translate('Compose file of this host')
     if source == 'url':
-        return _read_url(ui.ask(translate('Address of the Compose file'), '')), translate('downloaded Compose file')
+        reader = getattr(ui, 'definition_url', _read_url)
+        return reader(ui.ask(translate('Address of the Compose file'), '')), translate('downloaded Compose file')
     if source == 'run':
         return compose_from_docker_run(_read_pasted(ui, translate('docker run command of the application'))), \
             translate('docker run command')
@@ -651,8 +671,7 @@ def read_definition(ui) -> tuple[str, str]:
     try:
         return compose_from_image(reference), translate('image itself')
     except ConversionError as error:
-        from .registry_accounts import offer_sign_in
-        if not (refuses_access(error) and offer_sign_in(ui, reference)):
+        if not (refuses_access(error) and _offer_sign_in(ui, reference)):
             raise
     return compose_from_image(reference), translate('image itself')
 
@@ -868,7 +887,7 @@ def _name(ui, template: dict[str, Any]) -> str:
     return name
 
 
-def _explore(ui) -> None:
+def _explore(ui) -> dict[str, Any] | None:
     """Reads a Compose file, a docker run command, an image reference or an
     oci-compose, reports what ProxMenux would install from it and installs it."""
     text, origin = read_definition(ui)
@@ -899,8 +918,7 @@ def _explore(ui) -> None:
     for reference in references:
         accessible, report = registry_report(reference)
         if not accessible and _registry_refused(reference):
-            from .registry_accounts import offer_sign_in
-            if offer_sign_in(ui, reference, title):
+            if _offer_sign_in(ui, reference, title):
                 accessible, report = registry_report(reference)
         available = available and accessible
         if accessible and len(references) > 1:
@@ -946,7 +964,7 @@ def _explore(ui) -> None:
         name = normalize_app_id(source_text(template['catalog_ui'].get('title')) or str(template.get('id') or 'oci-app'))
     else:
         name = _name(ui, template)
-    install_template(ui, template, name, mode)
+    return install_template(ui, template, name, mode)
 
 
 def conversion_message(error: ConversionError) -> str:
@@ -982,8 +1000,13 @@ def conversion_message(error: ConversionError) -> str:
     return text
 
 
-def explore(ui) -> None:
+def install_custom(ui):
+    """Shared entry returning the existing installer's result."""
     try:
-        _explore(ui)
+        return _explore(ui)
     except ConversionError as error:
         raise ConversionError(conversion_message(error)) from error
+
+
+def explore(ui) -> None:
+    install_custom(ui)

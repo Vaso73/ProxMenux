@@ -1,0 +1,7 @@
+Formatting '/var/lib/vz/images/106/vm-106-disk-0.raw', fmt=raw size=8589934592 preallocation=off
+Creating filesystem with 2097152 4k blocks and 524288 inodes
+Filesystem UUID: 31524d8d-40d2-42d7-881e-9aa4c2b703dc
+Superblock backups stored on blocks:
+    32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632
+Detected OCI archive
+"UPID:homelab-2:002A9299:0105D86D:6AE48F4E:vzcreate:106:root@pam:"

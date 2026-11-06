@@ -60,6 +60,12 @@ def is_pbs_host():
     return get_platform().get("product") == "pbs"
 
 
+def get_cached_platform():
+    """Known application context; never run detection for a creation request."""
+    with _lock:
+        return dict(_platform_cache[1])
+
+
 def local_available():
     """This host runs PBS: as its product, or installed next to PVE."""
     if is_pbs_host():

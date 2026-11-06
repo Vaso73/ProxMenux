@@ -9058,5 +9058,13 @@
   "⚠ Disk data will NOT be erased.": "⚠ Dáta na disku sa NEVYMAŽÚ.",
   "⚠ Disk will be unmounted and removed from /etc/fstab.": "⚠ Disk sa odpojí a odstráni z /etc/fstab.",
   "⚠ The /etc/fstab entry will be removed.": "⚠ Záznam v /etc/fstab bude odstránený.",
-  "⚠ The disk will be unmounted.": "⚠ Disk bude odpojený."
+  "⚠ The disk will be unmounted.": "⚠ Disk bude odpojený.",
+  "Check the selected LXC and refresh its recovery record before continuing? A stopped LXC may be mounted for this check. Replacing or deleting the application requires another confirmation.": "Môžem overiť vybraný LXC a obnoviť jeho záznam na prípadnú obnovu? Pri zastavenom LXC môže kontrola dočasne pripojiť jeho disk. Výmenu alebo odstránenie aplikácie potvrdíš osobitne.",
+  "Paste Compose text": "Vložiť text Compose",
+  "Compose file on this server": "Súbor Compose na tomto serveri",
+  "Compose from a web address": "Compose z webovej adresy",
+  "Paste a docker run command": "Vložiť príkaz docker run",
+  "Paste oci-compose text": "Vložiť text oci-compose",
+  "oci-compose file on this server": "Súbor oci-compose na tomto serveri",
+  "oci-compose from a web address": "oci-compose z webovej adresy"
 }

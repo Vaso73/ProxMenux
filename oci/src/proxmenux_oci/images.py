@@ -43,7 +43,10 @@ def offer_removal(ui, vmids: list[int]) -> tuple[bool, str | None]:
         text = (f"{translate('The containers were created from downloaded OCI images')} ({len(archives)}, {total}). "
                 f"{translate('The containers do not need them any more; an update downloads the new versions when there are any.')}"
                 f"\n\n{translate('Delete the images to free the space?')}")
-    if not console.ask_yes_no(text, True):
+    if getattr(ui, 'defer_image_cleanup', False):
+        return True, None
+    confirm = getattr(ui, 'effect_review', None)
+    if not (confirm(text) if confirm else console.ask_yes_no(text, True)):
         return True, None
     removed = _cache("remove", vmids)
     if not removed or not removed.get("freed"):

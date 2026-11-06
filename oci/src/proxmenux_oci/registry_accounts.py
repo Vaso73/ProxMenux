@@ -147,6 +147,96 @@ def download_registry_image(reference, storage):
             'size': Path(path).stat().st_size, 'architecture': host_architecture()}
 
 
+def account_operation(ui, choice, row, auth):
+    """One native registry operation, shared by Menu and the web adapter."""
+    require_root()
+    title = translate('Registry accounts')
+    if choice == 'storage':
+        ui.message(translate('Credentials file:\n{path}\n\n'
+                   'Owned by root; directory mode 700 and file mode 600.\n'
+                   'Basic credentials are base64 encoded, not encrypted.\n'
+                   'Credential helpers use their own storage.\n\n'
+                   'Use an access token with permission to pull images.\n'
+                   'Every node of the cluster uses the accounts saved here.').format(path=auth.path), title)
+    elif choice in {'add', 'login'}:
+        registry = row['registry'].split('/', 1)[0] if row else ui.ask(translate('Registry hostname'), 'ghcr.io')
+        try:
+            registry = validate_registry(registry)
+        except RegistryError as error:
+            raise RegistryError(str(error)) from None
+        username = ui.ask(translate('Username'), row['account'] if row else None)
+        password = ui.password(translate('Password / access token (image pull permission)'))
+        ui.info(translate('Verifying registry access. Please wait...'))
+        if hasattr(ui, 'effect_review') and not ui.effect_review(translate('Sign in to a registry')):
+            return None
+        auth.login(registry, username, password)
+        del password
+        ui.message(translate('Signed in to {registry} as {username}.\n\n'
+                   'Credentials are saved for ProxMenux.\n'
+                   'Select the account to check, download or install an image.').format(
+                       registry=registry, username=clean(username)), title)
+    elif choice == 'logout' and row:
+        registry = row['registry'].split('/', 1)[0]
+        if ui.confirm(translate('Remove the saved credentials for {registry}?\nRunning apps will keep working.').format(registry=registry),
+                      False, title=title):
+            auth.logout(registry)
+            ui.message(translate('Saved credentials for {registry} were removed.\n'
+                                 'Other Skopeo/Docker credential files are managed separately.').format(registry=registry), title)
+        else:
+            return None
+    elif choice in {'inspect', 'download', 'install'} and row:
+        registry = row['registry'].split('/', 1)[0]
+        owner = row['account'] or 'owner'
+        reference = validate_image(ui.ask(translate('Image reference'), f'{registry}/{owner}/app:latest'))
+        if registry_of(reference) != registry:
+            raise RegistryError(translate('This account is for {registry}. Enter an image from that registry.').format(registry=registry))
+        if choice == 'inspect':
+            ui.info(translate('Checking image access and metadata. Please wait...'))
+            if hasattr(ui, 'effect_review') and not ui.effect_review(reference):
+                return None
+            result = inspect_registry_image(reference)
+            ui.message(translate('Image access confirmed.\n\n{reference}\n\n'
+                                 'Architecture: {architecture}\nVersion: {version}\n'
+                                 'Download size: {size}\nDigest: {digest}').format(
+                            reference=reference, architecture=result['architecture'],
+                            version=result['version'] or translate('Not declared'),
+                            size=bytes_label(result['size']), digest=result['digest']), title)
+        elif choice == 'download':
+            host = importlib.import_module('proxmenux_oci.host')
+            storages = host.storages('vztmpl')
+            if not storages:
+                raise RegistryError(translate('No active Proxmox storage accepts OCI template archives.'))
+            names = [item['storage'] for item in storages]
+            storage = ui.choose(translate('Choose storage for the downloaded image.'),
+                                [(item['storage'], f"{item['storage']}  ({bytes_label(item.get('avail', 0))} {translate('available')})")
+                                 for item in storages], 'local' if 'local' in names else names[0], title=title)
+            if storage is None:
+                return None
+            ui.info(translate('Downloading and verifying the image.\nThis can take a few minutes. Please wait...'))
+            if hasattr(ui, 'effect_review') and not ui.effect_review(reference):
+                return None
+            result = download_registry_image(reference, storage)
+            ui.message(translate('Image downloaded and verified.\n\n{reference}\n\n'
+                                 'Storage: {storage}\nArchive size: {size}\n'
+                                 'Archive: {archive}\n\nNo container was created.\n'
+                                 'ProxMenux removes unused cached images after successful updates.').format(
+                            reference=reference, storage=storage, size=bytes_label(result['size']),
+                            archive=result['archive']), title)
+        else:
+            ui.info(translate('Reading image metadata. Please wait...'))
+            with registry_environment():
+                template = image_template(reference)
+                if not template.get('compatibility', {}).get('automatic_install_candidate'):
+                    raise RegistryError(translate('ProxMenux cannot install this image automatically. Import its Compose file instead.'))
+                installer = importlib.import_module('proxmenux_oci.installer')
+                native_cli = importlib.import_module('proxmenux_oci.cli')
+                mode = ui.choose(translate('Installation settings'), [(installer.DEFAULT_MODE, translate('Default settings')),
+                                 (installer.ADVANCED_MODE, translate('Advanced settings'))], installer.DEFAULT_MODE, title=title)
+                if mode is not None:
+                    return native_cli.install_template(ui, template, template['id'], mode)
+    return {'operation': choice}
+
+
 def registry_accounts_menu(ui, engine=ENGINE_ROOT, auth=None):
     """Manage private registry accounts and images in ProxMenux."""
     require_root()
@@ -194,81 +284,7 @@ def registry_accounts_menu(ui, engine=ENGINE_ROOT, auth=None):
                                     ('logout', translate('Remove saved credentials'))], 'inspect', title=title, show_tags=False)
                 if choice is None:
                     continue
-            if choice == 'storage':
-                ui.message(translate('Credentials file:\n{path}\n\n'
-                           'Owned by root; directory mode 700 and file mode 600.\n'
-                           'Basic credentials are base64 encoded, not encrypted.\n'
-                           'Credential helpers use their own storage.\n\n'
-                           'Use an access token with permission to pull images.\n'
-                           'Every node of the cluster uses the accounts saved here.').format(path=auth.path), title)
-            elif choice in {'add', 'login'}:
-                registry = row['registry'].split('/', 1)[0] if row else ui.ask(translate('Registry hostname'), 'ghcr.io')
-                try:
-                    registry = validate_registry(registry)
-                except RegistryError as error:
-                    raise RegistryError(str(error)) from None
-                username = ui.ask(translate('Username'), row['account'] if row else None)
-                password = ui.password(translate('Password / access token (image pull permission)'))
-                ui.info(translate('Verifying registry access. Please wait...'))
-                auth.login(registry, username, password)
-                del password
-                ui.message(translate('Signed in to {registry} as {username}.\n\n'
-                           'Credentials are saved for ProxMenux.\n'
-                           'Select the account to check, download or install an image.').format(
-                               registry=registry, username=clean(username)), title)
-            elif choice == 'logout' and row:
-                registry = row['registry'].split('/', 1)[0]
-                if ui.confirm(translate('Remove the saved credentials for {registry}?\nRunning apps will keep working.').format(registry=registry),
-                              False, title=title):
-                    auth.logout(registry)
-                    ui.message(translate('Saved credentials for {registry} were removed.\n'
-                                         'Other Skopeo/Docker credential files are managed separately.').format(registry=registry), title)
-            elif choice in {'inspect', 'download', 'install'} and row:
-                registry = row['registry'].split('/', 1)[0]
-                owner = row['account'] or 'owner'
-                reference = validate_image(ui.ask(translate('Image reference'), f'{registry}/{owner}/app:latest'))
-                if registry_of(reference) != registry:
-                    raise RegistryError(translate('This account is for {registry}. Enter an image from that registry.').format(registry=registry))
-                if choice == 'inspect':
-                    ui.info(translate('Checking image access and metadata. Please wait...'))
-                    result = inspect_registry_image(reference)
-                    ui.message(translate('Image access confirmed.\n\n{reference}\n\n'
-                                         'Architecture: {architecture}\nVersion: {version}\n'
-                                         'Download size: {size}\nDigest: {digest}').format(
-                                    reference=reference, architecture=result['architecture'],
-                                    version=result['version'] or translate('Not declared'),
-                                    size=bytes_label(result['size']), digest=result['digest']), title)
-                elif choice == 'download':
-                    host = importlib.import_module('proxmenux_oci.host')
-                    storages = host.storages('vztmpl')
-                    if not storages:
-                        raise RegistryError(translate('No active Proxmox storage accepts OCI template archives.'))
-                    names = [item['storage'] for item in storages]
-                    storage = ui.choose(translate('Choose storage for the downloaded image.'),
-                                        [(item['storage'], f"{item['storage']}  ({bytes_label(item.get('avail', 0))} {translate('available')})")
-                                         for item in storages], 'local' if 'local' in names else names[0], title=title)
-                    if storage is None:
-                        continue
-                    ui.info(translate('Downloading and verifying the image.\nThis can take a few minutes. Please wait...'))
-                    result = download_registry_image(reference, storage)
-                    ui.message(translate('Image downloaded and verified.\n\n{reference}\n\n'
-                                         'Storage: {storage}\nArchive size: {size}\n'
-                                         'Archive: {archive}\n\nNo container was created.\n'
-                                         'ProxMenux removes unused cached images after successful updates.').format(
-                                    reference=reference, storage=storage, size=bytes_label(result['size']),
-                                    archive=result['archive']), title)
-                else:
-                    ui.info(translate('Reading image metadata. Please wait...'))
-                    with registry_environment():
-                        template = image_template(reference)
-                        if not template.get('compatibility', {}).get('automatic_install_candidate'):
-                            raise RegistryError(translate('ProxMenux cannot install this image automatically. Import its Compose file instead.'))
-                        installer = importlib.import_module('proxmenux_oci.installer')
-                        native_cli = importlib.import_module('proxmenux_oci.cli')
-                        mode = ui.choose(translate('Installation settings'), [(installer.DEFAULT_MODE, translate('Default settings')),
-                                         (installer.ADVANCED_MODE, translate('Advanced settings'))], installer.DEFAULT_MODE, title=title)
-                        if mode is not None:
-                            native_cli.install_template(ui, template, template['id'], mode)
+            account_operation(ui, choice, row, auth)
         except cancelled:
             continue
         except (RegistryError, OSError, ValueError) as error:

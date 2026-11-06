@@ -20,6 +20,8 @@ HTTP = 'The application did not pass its HTTP check:'
 
 
 def extracted(name, **dependencies):
+    if name == '_manage_stack':
+        dependencies['stack_update_supported'] = extracted('stack_update_supported', **dependencies)
     node = next(n for n in ast.parse(MENU.read_text()).body
                 if isinstance(n, ast.FunctionDef) and n.name == name)
     # Drop only infrastructure imports, retaining all selection, guard, and return logic.

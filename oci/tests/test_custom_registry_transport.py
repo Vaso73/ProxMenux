@@ -17,6 +17,11 @@ REFERENCE = 'registry.test:5443/team/app:release@' + DIGEST
 LOOKUP = 'registry.test:5443/team/app@' + DIGEST
 
 class CustomRegistryTransportTests(unittest.TestCase):
+    def test_web_registry_check_never_opens_account_management(self):
+        with patch('proxmenux_oci.registry_accounts.offer_sign_in') as sign_in:
+            self.assertFalse(custom._offer_sign_in(SimpleNamespace(allow_registry_sign_in=False), 'nginx:alpine'))
+            sign_in.assert_not_called()
+
     def test_existing_image_parser_keeps_ports_and_pinned_digest(self):
         pairs = [(REFERENCE, LOOKUP), ('[::1]:5443/team/app:release@' + DIGEST,
                                       '[::1]:5443/team/app@' + DIGEST),

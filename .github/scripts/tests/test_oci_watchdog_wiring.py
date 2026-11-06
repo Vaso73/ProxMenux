@@ -67,7 +67,7 @@ class OciWatchdogInstaller(TestCase):
         install = self.CLI[self.CLI.index('def install_template('):self.CLI.index('def _rclone_mount(')]
         asked = install.index('deployment["watchdog"] = wizard.confirm(')
         self.assertLess(install.index('deployment = build_deployment(candidate, wizard, mode)'), asked)
-        self.assertLess(asked, install.index('approved = wizard.review('))
+        self.assertLess(asked, install.index('approved = wizard.installation_review('))
         self.assertLess(install.index('watchdog = bool(deployment.pop("watchdog", False))'), install.index('run_remote_install('))
         self._assert_jobs_are_excluded_from_installed_watchdog()
         self.assertIn('row(translate("Watchdog"), _yes_no(plan["watchdog"]))', self.CLI)
@@ -88,7 +88,7 @@ class OciWatchdogInstaller(TestCase):
         set_watchdog = Mock(return_value=True)
         class UI:
             def confirm(self, *args, **kwargs): return True
-            def review(self, *args, **kwargs): return True
+            def installation_review(self, *args, **kwargs): return True
             def close(self): pass
         def install(project, template, plan, target):
             self.assertNotIn('watchdog', plan)
