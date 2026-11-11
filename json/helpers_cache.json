@@ -526,6 +526,44 @@
     "os": "ubuntu"
   },
   {
+    "name": "agentgateway",
+    "slug": "agentgateway",
+    "desc": "agentgateway is an open-source proxy for AI agents, from the Linux Foundation. It sits in front of MCP servers, LLM providers and HTTP APIs, and adds authentication, authorization, rate limits and observability, so agents can reach tools without holding the upstream credentials.",
+    "script": "ct/agentgateway.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/agentgateway.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/agentgateway.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020",
+      "scriptcat00021"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools",
+      "Webservers & Proxies"
+    ],
+    "notes": [
+      "Open http://<IP>:4000/ui and the Welcome to Agentgateway wizard guides the first setup.",
+      "Config: /etc/agentgateway/config.yaml, data: /opt/agentgateway_data. The admin interface stays on 127.0.0.1:15000, as upstream ships it."
+    ],
+    "warnings": [
+      "The UI and gateway on port 4000 have no login until you add policies (ui.policies: basicAuth, OIDC, JWT). See https://agentgateway.dev/docs/standalone/latest/documentation/setup/ui/secure-ui/"
+    ],
+    "port": 4000,
+    "website": "https://agentgateway.dev/",
+    "documentation": "https://agentgateway.dev/docs/",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/agentgateway.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
     "name": "AIOStreams",
     "slug": "aiostreams",
     "desc": "AIOStreams consolidates multiple Stremio addons and debrid services into a single, highly customisable super-addon, with filtering, sorting, and formatting of results.",
@@ -551,6 +589,42 @@
     "website": "https://github.com/Viren070/AIOStreams",
     "documentation": "https://docs.aiostreams.viren070.me/",
     "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/aiostreams.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "AirConnect",
+    "slug": "airconnect",
+    "desc": "AirConnect adds AirPlay capabilities to Chromecast and UPnP (such as Sonos) players, allowing them to appear as native AirPlay audio devices on your network.",
+    "script": "ct/airconnect.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/airconnect.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/airconnect.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00013"
+    ],
+    "category_names": [
+      "Media & Streaming"
+    ],
+    "notes": [
+      "Both AirUPnP (Sonos/UPnP bridge) and AirCast (Chromecast bridge) services are enabled by default. If you only need one, disable the unused service with systemctl disable --now aircast or systemctl disable --now airupnp.",
+      "Optional custom XML configuration files can be placed at /opt/airconnect/airupnp.xml and /opt/airconnect/aircast.xml. Custom configs are preserved across updates."
+    ],
+    "warnings": [
+      "AirConnect relies on network discovery (mDNS on UDP 5353 and UPnP/SSDP on UDP 1900) to find players and receive AirPlay streams. The container must be attached to the same local network bridge (e.g. vmbr0) as your audio devices and AirPlay clients."
+    ],
+    "port": 0,
+    "website": "https://github.com/philippe44/AirConnect",
+    "documentation": "https://github.com/philippe44/AirConnect#readme",
+    "logo": "https://avatars.githubusercontent.com/u/9712599?v=4",
     "updateable": true,
     "privileged": false,
     "has_arm": false,
@@ -2671,6 +2745,42 @@
     ],
     "config_path": "",
     "os": "alpine"
+  },
+  {
+    "name": "Bluesky PDS",
+    "slug": "bluesky-pds",
+    "desc": "Host a federated Bluesky Personal Data Server (PDS) and manage accounts on your own domain. This deployment builds and runs the official TypeScript PDS directly in the LXC without Docker or an in-container reverse proxy.",
+    "script": "ct/bluesky-pds.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/bluesky-pds.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/bluesky-pds.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00000"
+    ],
+    "category_names": [
+      "Miscellaneous"
+    ],
+    "notes": [
+      "This is a source-built, community-maintained native deployment; it is not the upstream Docker installer and needs testing before production use."
+    ],
+    "warnings": [
+      "Create A records for your PDS domain and its wildcard (*.your-domain) pointing to this LXC before installation.",
+      "PDS running ob TCP port 3000."
+    ],
+    "port": 3000,
+    "website": "https://bsky.social/",
+    "documentation": "https://github.com/bluesky-social/pds",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/bluesky.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
   },
   {
     "name": "BookLore",
@@ -5228,8 +5338,8 @@
       "Project is currently marked beta upstream and not intended for production use yet."
     ],
     "port": 4444,
-    "website": "https://github.com/fccview/degoog",
-    "documentation": "https://fccview.github.io/degoog/",
+    "website": "https://github.com/degoog-org/degoog",
+    "documentation": "https://degoog-org.github.io/docs/",
     "logo": "https://raw.githubusercontent.com/fccview/degoog/main/src/public/images/degoog-logo.png",
     "updateable": true,
     "privileged": false,
@@ -7716,6 +7826,42 @@
     "os": "ubuntu"
   },
   {
+    "name": "Floci",
+    "slug": "floci",
+    "desc": "Floci is a free, open source local AWS emulator for development and CI. It serves S3, SQS, SNS, DynamoDB, IAM, Lambda, Secrets Manager and many more services on a single endpoint at port 4566, so the AWS CLI and SDKs work against it by setting an endpoint URL.",
+    "script": "ct/floci.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/floci.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/floci.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "Docker is not installed, so services that run containers (Lambda, ECS, RDS, ElastiCache, EKS and similar) are limited or unavailable. S3, SQS, SNS, DynamoDB and the other core services work.",
+      "Response URLs such as SQS queue URLs use FLOCI_BASE_URL in /opt/floci_data/.env, set to the container IP at install. Update it and restart floci when the IP changes or clients reach Floci through a hostname."
+    ],
+    "warnings": [
+      "Floci has no authentication. Use any non-empty AWS access key and secret (for example test/test), region us-east-1, and set the endpoint URL to http://<container-ip>:4566. Keep it on a trusted network."
+    ],
+    "port": 4566,
+    "website": "https://floci.io/floci/",
+    "documentation": "https://floci.io/floci/",
+    "logo": "https://cdn.jsdelivr.net/gh/floci-io/floci@main/docs/assets/floci.svg",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
     "name": "FlowiseAI",
     "slug": "flowiseai",
     "desc": "FlowiseAI is an open source low-code tool for developers to build customized LLM orchestration flow & AI agents",
@@ -9176,6 +9322,38 @@
     "os": "debian"
   },
   {
+    "name": "GPU Passthrough",
+    "slug": "gpu-passthrough",
+    "desc": "A helper script for configuring GPU passthrough (vfio-pci) for virtual machines on Proxmox VE. It checks CPU virtualization and IOMMU status, configures GRUB and VFIO kernel modules, binds detected GPU PCI devices, adds driver softdeps (NVIDIA/AMD), updates initramfs, extracts ACPI VFCT VBIOS for AMD GPUs, and provides verification and revert options.",
+    "script": "tools/pve/gpu-passthrough.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/tools/pve/gpu-passthrough.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/tools/pve/gpu-passthrough.sh",
+    "type": "pve",
+    "type_id": "1uyjfno0fpf5buh",
+    "categories": [],
+    "category_names": [],
+    "notes": [
+      "Run this script directly in the Proxmox VE host shell as root.",
+      "A host reboot is required after enabling or reverting GPU passthrough for changes to take effect."
+    ],
+    "warnings": [
+      "This tool configures vfio-pci to dedicate your GPU exclusively to Virtual Machines. Do not use this if you want to share your GPU with LXC containers (e.g., Plex or Ollama), as VFIO unbinds host drivers and disables /dev/dri and /dev/kfd."
+    ],
+    "port": 0,
+    "website": "https://community-scripts.org",
+    "documentation": "https://pve.proxmox.com/wiki/PCI(e)_Passthrough",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/proxmox.webp",
+    "updateable": false,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "pve"
+    ],
+    "config_path": "",
+    "os": ""
+  },
+  {
     "name": "Grafana",
     "slug": "grafana",
     "desc": "Grafana is a data visualization and monitoring platform that enables users to query, visualize, alert on and understand metrics, logs, and other data sources. It integrates with various data sources, including Prometheus, InfluxDB, Elasticsearch, and many others, to present a unified view of the data and enable users to create insightful and interactive dashboards.",
@@ -9870,6 +10048,40 @@
     "is_dev": false,
     "execute_in": [
       "pve"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Hindsight",
+    "slug": "hindsight",
+    "desc": "Hindsight is an open-source memory server for AI agents. Agents retain conversations and documents into memory banks, then recall facts, entities and their history, or reflect on them, through a REST API, SDKs and an MCP server.",
+    "script": "ct/hindsight.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/hindsight.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/hindsight.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "The API key is saved to `~/hindsight.creds` inside the container. Send it as `Authorization: Bearer <key>` to the API and the MCP endpoint.",
+      "Without an LLM, Hindsight stores plain chunks only. Set the provider, key and model in `/opt/hindsight.env`, then run `systemctl restart hindsight`."
+    ],
+    "warnings": [],
+    "port": 8888,
+    "website": "https://hindsight.vectorize.io/",
+    "documentation": "https://hindsight.vectorize.io/developer/installation",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/hindsight.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
     ],
     "config_path": "",
     "os": "debian"
@@ -18873,6 +19085,40 @@
     "os": "debian"
   },
   {
+    "name": "PinePods",
+    "slug": "pinepods",
+    "desc": "Pinepods is a complete podcast management system that allows you to play, download, and keep track of podcasts you enjoy. All self hosted and enjoyed on your own server!",
+    "script": "ct/pinepods.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/pinepods.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/pinepods.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00013"
+    ],
+    "category_names": [
+      "Media & Streaming"
+    ],
+    "notes": [
+      "There is no default account. The first visit to the web UI asks you to create the admin user.",
+      "HOSTNAME and SERVER_URL in /opt/pinepods_data/.env must match the address you open PinePods at. Change them for a new IP or a reverse proxy, then run systemctl restart pinepods."
+    ],
+    "warnings": [],
+    "port": 8040,
+    "website": "https://www.pinepods.online/",
+    "documentation": "https://www.pinepods.online/docs/Introduction",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/pinepods.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
     "name": "Pixelfed",
     "slug": "pixelfed",
     "desc": "Pixelfed is a free, ethical, and decentralized photo sharing platform powered by ActivityPub federation. It offers an ad-free, privacy-focused alternative to Instagram with features like Stories, Collections, and photo filters.",
@@ -25034,6 +25280,46 @@
     "os": "alpine"
   },
   {
+    "name": "TrailBase",
+    "slug": "trailbase",
+    "desc": "TrailBase is an open, single-executable Firebase alternative built on Rust, SQLite and Wasmtime. It turns your tables into type-safe REST and realtime APIs with built-in auth, file uploads, an MCP server and an admin UI, and runs custom server logic as WebAssembly components.",
+    "script": "ct/trailbase.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/trailbase.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/trailbase.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00008",
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "Databases",
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "Sign in to the admin UI at http://<IP>:4000/_/admin/ with the email and password from /opt/trailbase_data/.env.",
+      "Auth emails and OAuth redirects use PUBLIC_URL in /opt/trailbase_data/.env; change it when TrailBase is reached through a domain."
+    ],
+    "warnings": [],
+    "port": 4000,
+    "website": "https://trailbase.io/",
+    "documentation": "https://trailbase.io/getting-started/install",
+    "logo": "https://cdn.jsdelivr.net/gh/trailbaseio/trailbase@main/assets/logo.svg",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin@localhost",
+      "password": ""
+    },
+    "os": "debian"
+  },
+  {
     "name": "Transmission",
     "slug": "transmission",
     "desc": "Transmission is a free, open-source BitTorrent client known for its fast download speeds and ease of use. It supports various platforms such as Windows, Linux, and macOS and has features like web interface, peer exchange, and encrypted transfers.",
@@ -25198,7 +25484,7 @@
     "warnings": [],
     "port": 8080,
     "website": "https://github.com/TriliumNext/trilium",
-    "documentation": "https://github.com/TriliumNext/trilium/wiki",
+    "documentation": "https://docs.triliumnotes.org/user-guide/",
     "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/trilium-notes.webp",
     "updateable": true,
     "privileged": false,
