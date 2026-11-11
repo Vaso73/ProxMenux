@@ -1679,10 +1679,10 @@
     "website": "https://community-scripts.org",
     "documentation": "community-scripts/DevScripts/blob/main/tools/arr-stack.sh",
     "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/ProxmoxVE.webp",
-    "updateable": true,
+    "updateable": false,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -10437,8 +10437,7 @@
       "Documents & Notes"
     ],
     "notes": [
-      "Links and redirects use APP_URL in /opt/ideon_data/.env. Change it behind a reverse proxy or after an IP change, add the SMTP_* values for email, then run systemctl restart ideon.",
-      "Shell blocks, MCP and API-key clients, and access requests to other users' projects do not work here, as the database user is not a superuser like in upstream's Docker setup."
+      "Links and redirects use APP_URL in /opt/ideon_data/.env. Change it behind a reverse proxy or after an IP change, add the SMTP_* values for email, then run systemctl restart ideon."
     ],
     "warnings": [
       "There is no default account: the first visit opens the setup page that creates the super-admin. Finish it right after the install."
@@ -12727,6 +12726,40 @@
     "website": "https://github.com/TheWicklowWolf/Lidify",
     "documentation": "https://github.com/TheWicklowWolf/Lidify#readme",
     "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/lidify.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Lightpanda",
+    "slug": "lightpanda",
+    "desc": "Lightpanda is a headless browser built from scratch for AI agents and automation. It runs JavaScript and speaks the Chrome DevTools Protocol, so Puppeteer and Playwright scripts work against it, and it has a built-in MCP server for AI agents.",
+    "script": "ct/lightpanda.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/lightpanda.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/lightpanda.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "Connect Puppeteer or Playwright to ws://<IP>:9222. Add http://<IP>:9223/mcp to your AI agent as an HTTP MCP server.",
+      "Requests to private and internal IPs are blocked so an agent can't be steered into your LAN. Remove --block-private-networks from both service files to browse internal sites."
+    ],
+    "warnings": [],
+    "port": 9222,
+    "website": "https://lightpanda.io/",
+    "documentation": "https://lightpanda.io/docs",
+    "logo": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/lightpanda.webp",
     "updateable": true,
     "privileged": false,
     "has_arm": false,
