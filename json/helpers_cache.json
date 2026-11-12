@@ -6125,28 +6125,31 @@
     "type": "lxc",
     "type_id": "nm9bra8mzye2scg",
     "categories": [
-      "scriptcat00020"
+      "scriptcat00020",
+      "scriptcat00021"
     ],
     "category_names": [
-      "AI / Coding & Dev-Tools"
+      "AI / Coding & Dev-Tools",
+      "Webservers & Proxies"
     ],
     "notes": [
-      "FTP server credentials: `cat ~/ftp.creds`"
+      "FTP server credentials: `cat ~/ftp.creds`",
+      "If you change the name of the project you are uploading to the container, remember to change the target `.dll` file in the systemd service `/etc/systemd/system/kestrel-aspnetapi.service`"
     ],
     "warnings": [],
     "port": 80,
-    "website": "https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-9.0&tabs=linux-ubuntu",
-    "documentation": "https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-9.0&tabs=linux-ubuntu",
+    "website": "https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian",
+    "documentation": "https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian",
     "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/asp-net-core.webp",
     "updateable": true,
-    "privileged": true,
+    "privileged": false,
     "has_arm": true,
     "is_dev": false,
     "execute_in": [
       "pve"
     ],
     "config_path": "",
-    "os": "ubuntu"
+    "os": "debian"
   },
   {
     "name": "Downtify",
@@ -12538,6 +12541,47 @@
       "lxc"
     ],
     "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Langfuse",
+    "slug": "langfuse",
+    "desc": "Langfuse is an open-source LLM engineering platform. It records traces, token usage and costs from LLM applications and agents, and adds evaluations, prompt management and analytics dashboards.",
+    "script": "ct/langfuse.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/langfuse.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/langfuse.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00009",
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "Monitoring & Analytics",
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "The admin login and the Default project's API keys are saved to ~/langfuse.creds inside the container. Sign-up is off, invited users included; set AUTH_DISABLE_SIGNUP=false in /opt/langfuse_data/.env and restart langfuse-web while adding users.",
+      "Behind a reverse proxy, set NEXTAUTH_URL in /opt/langfuse_data/.env to the external URL and restart langfuse-web.",
+      "Media uploads and batch exports are not configured; they need an S3 endpoint reachable by clients."
+    ],
+    "warnings": [],
+    "port": 3000,
+    "website": "https://langfuse.com/",
+    "documentation": "https://langfuse.com/self-hosting",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/langfuse.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin@example.com",
+      "password": ""
+    },
     "os": "debian"
   },
   {
@@ -19144,7 +19188,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -24728,6 +24772,42 @@
     "privileged": false,
     "has_arm": true,
     "is_dev": false,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Temporal",
+    "slug": "temporal",
+    "desc": "Temporal is an open-source durable execution platform. Workflows written in Go, Java, Python, TypeScript, .NET, PHP or Ruby keep their state across crashes, restarts and retries, and the server handles timers, retries, signals and schedules so application code does not have to.",
+    "script": "ct/temporal.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/temporal.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/temporal.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "Point workers and SDK clients at <IP>:7233. The temporal CLI is installed in the container and already talks to the local server; the default namespace is created with a 72h retention.",
+      "The database password lives in /etc/temporal/temporal.env; the server config in /etc/temporal/config/production.yaml reads it from there. Restart temporal after changing either file."
+    ],
+    "warnings": [
+      "The gRPC endpoint on port 7233 and the UI on 8080 have no authentication. Keep the container on a trusted network or put it behind a firewall and a TLS proxy."
+    ],
+    "port": 8080,
+    "website": "https://temporal.io/",
+    "documentation": "https://docs.temporal.io/",
+    "logo": "https://cdn.jsdelivr.net/gh/temporalio/ui@main/src/lib/vendor/apple-touch-icon.png",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
     "execute_in": [
       "lxc"
     ],
