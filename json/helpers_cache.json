@@ -6171,6 +6171,40 @@
     "os": "debian"
   },
   {
+    "name": "Docling Serve",
+    "slug": "docling-serve",
+    "desc": "Docling Serve runs IBM's Docling document converter as an API service. It turns PDF, DOCX, PPTX, HTML and images into Markdown, JSON or plain text, with layout analysis, table structure recognition and OCR, and ships a web UI for trying conversions.",
+    "script": "ct/docling-serve.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/docling-serve.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/docling-serve.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00020"
+    ],
+    "category_names": [
+      "AI / Coding & Dev-Tools"
+    ],
+    "notes": [
+      "Every API call needs the X-Api-Key header with DOCLING_SERVE_API_KEY from /opt/docling-serve_data/.env. In the web UI, enter it under Set API key.",
+      "Only the default layout, table, picture and OCR models are installed. Enrichments such as code, formula or picture description need theirs first: /opt/docling-serve/.venv/bin/docling-tools models download -o /opt/docling-serve_data/models <model>"
+    ],
+    "warnings": [],
+    "port": 5001,
+    "website": "https://www.docling.ai/",
+    "documentation": "https://github.com/docling-project/docling-serve/tree/main/docs",
+    "logo": "https://cdn.jsdelivr.net/gh/docling-project/docling@main/docs/assets/logo.svg",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
     "name": "Docmost",
     "slug": "docmost",
     "desc": "Open-source collaborative wiki and documentation software. Create, collaborate, and share knowledge seamlessly with Docmost. Ideal for managing your wiki, knowledge-base, documentation and a lot more.",
@@ -7812,6 +7846,41 @@
     "is_dev": false,
     "execute_in": [
       "pve"
+    ],
+    "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Fider",
+    "slug": "fider",
+    "desc": "Fider is an open platform to collect and prioritize customer feedback. Users post ideas, vote and comment on them, while the team responds, sets each idea's status and shares a roadmap, so the most requested features rise to the top.",
+    "script": "ct/fider.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/fider.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/fider.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00025"
+    ],
+    "category_names": [
+      "Business & ERP"
+    ],
+    "notes": [
+      "Without SMTP, submit the setup form, then run su postgres -c \"psql fider -tAc 'select key from email_verifications order by id desc limit 1'\" and open http://<IP>:3000/signup/verify?k=<key>."
+    ],
+    "warnings": [
+      "Fider signs users in with emailed links: fill in the SMTP fields when creating the container, or set EMAIL_SMTP_* in /opt/fider_data/.env and run systemctl restart fider."
+    ],
+    "port": 3000,
+    "website": "https://fider.io/",
+    "documentation": "https://docs.fider.io/self-hosted/",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/fider.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
     ],
     "config_path": "",
     "os": "debian"
@@ -14736,6 +14805,45 @@
     "os": "debian"
   },
   {
+    "name": "Mage",
+    "slug": "mage-ai",
+    "desc": "Mage is an open-source data pipeline tool for building, running and monitoring ETL and ELT pipelines. Pipelines are made of Python, SQL or R blocks edited in a notebook-style UI, and run on schedules, events or API triggers, with data integrations for syncing sources into warehouses.",
+    "script": "ct/mage-ai.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/mage-ai.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/mage-ai.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00019"
+    ],
+    "category_names": [
+      "Automation & Scheduling"
+    ],
+    "notes": [
+      "Sign in as admin@admin.com with DEFAULT_OWNER_PASSWORD from /opt/mage-ai_data/.env, then change it in the user settings. The value in .env is only used to create the first owner."
+    ],
+    "warnings": [
+      "Every signed-in user can run code and open a terminal as root inside the container. Keep port 6789 on a trusted network."
+    ],
+    "port": 6789,
+    "website": "https://www.mage.ai/",
+    "documentation": "https://docs.mage.ai/",
+    "logo": "https://cdn.jsdelivr.net/gh/mage-ai/mage-ai@master/docs/favicons/m1.svg",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin@admin.com",
+      "password": ""
+    },
+    "os": "debian"
+  },
+  {
     "name": "MagicMirror Server",
     "slug": "magicmirror",
     "desc": "MagicMirror² is a smart mirror software that allows you to build your own personal smart mirror. It uses modular components that you can customize to display information such as the weather, news, calendar, to-do list, and more. The platform is open source, allowing for community contributions and customization.",
@@ -15033,7 +15141,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -19079,6 +19187,43 @@
     "os": "debian"
   },
   {
+    "name": "Organizr",
+    "slug": "organizr",
+    "desc": "Organizr is a homelab services organizer that puts apps like Sonarr, Radarr, Plex or Home Assistant into tabs of a single web dashboard. It handles users and groups with per-tab access, single sign-on into many supported apps, and a homepage with widgets for downloads, calendars and media.",
+    "script": "ct/organizr.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/organizr.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/organizr.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00010"
+    ],
+    "category_names": [
+      "Dashboards & Frontends"
+    ],
+    "notes": [
+      "The setup wizard is completed during install. Sign in with the admin user and generated password from /opt/organizr_data/.env inside the container."
+    ],
+    "warnings": [],
+    "port": 80,
+    "website": "https://organizr.app/",
+    "documentation": "https://docs.organizr.app/",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/organizr.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin",
+      "password": ""
+    },
+    "os": "debian"
+  },
+  {
     "name": "OTS",
     "slug": "ots",
     "desc": "One-Time-Secret sharing platform with a symmetric 256bit AES encryption in the browser.",
@@ -20054,6 +20199,41 @@
     ],
     "config_path": "",
     "os": ""
+  },
+  {
+    "name": "PG Back Web",
+    "slug": "pgbackweb",
+    "desc": "PG Back Web is a web interface for scheduled PostgreSQL backups with pg_dump. It runs backups of PostgreSQL 13 to 18 servers on cron schedules, stores them on local disk or any number of S3 buckets with retention, and restores or downloads them from the browser, with execution logs and webhooks for monitoring.",
+    "script": "ct/pgbackweb.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/pgbackweb.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/pgbackweb.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00007",
+      "scriptcat00008"
+    ],
+    "category_names": [
+      "Backup & Recovery",
+      "Databases"
+    ],
+    "notes": [],
+    "warnings": [
+      "Create the admin account right after the install: until then anyone who can reach port 8085 can claim it."
+    ],
+    "port": 8085,
+    "website": "https://github.com/eduardolat/pgbackweb",
+    "documentation": "https://github.com/eduardolat/pgbackweb#readme",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/pg-back-web.webp",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "os": "debian"
   },
   {
     "name": "PhotoPrism",
@@ -21941,6 +22121,43 @@
       "lxc"
     ],
     "config_path": "",
+    "os": "debian"
+  },
+  {
+    "name": "Pydio Cells",
+    "slug": "pydio-cells",
+    "desc": "Pydio Cells is a self-hosted document sharing and collaboration platform. It organizes files into workspaces with fine-grained permissions, public and private share links, versioning and automated flows, and connects desktop sync and mobile clients.",
+    "script": "ct/pydio-cells.sh",
+    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/pydio-cells.sh",
+    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/ct/pydio-cells.sh",
+    "type": "lxc",
+    "type_id": "nm9bra8mzye2scg",
+    "categories": [
+      "scriptcat00011"
+    ],
+    "category_names": [
+      "Files & Downloads"
+    ],
+    "notes": [
+      "Open https://<IP>:8080 and accept the self-signed certificate, the web UI needs HTTPS. Log in as admin with the password from /opt/pydio-cells_data/.env."
+    ],
+    "warnings": [],
+    "port": 8080,
+    "website": "https://pydio.com/",
+    "documentation": "https://docs.pydio.com/cells-v5/",
+    "logo": "https://cdn.jsdelivr.net/gh/pydio/cells@v5.1.1/frontend/assets/gui.ajax/res/themes/common/images/PydioLogoSquare.png",
+    "updateable": true,
+    "privileged": false,
+    "has_arm": false,
+    "is_dev": true,
+    "execute_in": [
+      "lxc"
+    ],
+    "config_path": "",
+    "default_credentials": {
+      "username": "admin",
+      "password": ""
+    },
     "os": "debian"
   },
   {
@@ -25124,7 +25341,7 @@
     "port": 443,
     "website": "https://stoat.chat",
     "documentation": "https://github.com/stoatchat/self-hosted",
-    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/stoatchat.webp",
+    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/stoat.webp",
     "updateable": true,
     "privileged": false,
     "has_arm": false,
