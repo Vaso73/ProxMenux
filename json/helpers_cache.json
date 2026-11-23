@@ -1243,7 +1243,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -3169,7 +3169,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -6072,42 +6072,6 @@
       "password": "deluge"
     },
     "os": "debian"
-  },
-  {
-    "name": "PVE Startup Dependency Check",
-    "slug": "dependency-check",
-    "desc": "This script checks for the presence of required dependencies before starting a VM or LXC container in Proxmox. It ensures that all referenced storages are available and, additionally, supports the usage of tags to check for specific dependencies. If any required dependency is missing, the VM or container will not start until the issue is resolved. This script is designed to be used as a Proxmox hookscript, which can be applied to both QEMU VMs and LXC containers.",
-    "script": "tools/pve/dependency-check.sh",
-    "script_url": "https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/tools/pve/dependency-check.sh",
-    "script_url_mirror": "https://git.community-scripts.org/community-scripts/ProxmoxVE/raw/branch/main/tools/pve/dependency-check.sh",
-    "type": "pve",
-    "type_id": "1uyjfno0fpf5buh",
-    "categories": [
-      "scriptcat00001"
-    ],
-    "category_names": [
-      "Host Management"
-    ],
-    "notes": [
-      "Execute within the Proxmox shell",
-      "The script supports --install (default), --status and --uninstall for clean lifecycle management.",
-      "To wait until a certain host is available, tag the VM or container with `dep_ping_<hostname>` where `<hostname>` is the name or IP of the host to ping. The script will wait until the host is reachable before proceeding with the startup.",
-      "To wait until a certain TCP port is open, tag the VM or container with `dep_tcp_<hostname>_<port>` where `<hostname>` is the name or IP of the host and `<port>` is the TCP port number. The script will wait until the port is open before proceeding with the startup."
-    ],
-    "warnings": [],
-    "port": 0,
-    "website": "",
-    "documentation": "",
-    "logo": "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/proxmox.webp",
-    "updateable": false,
-    "privileged": false,
-    "has_arm": true,
-    "is_dev": true,
-    "execute_in": [
-      "pve"
-    ],
-    "config_path": "",
-    "os": ""
   },
   {
     "name": "Devuan",
@@ -9354,7 +9318,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -13199,7 +13163,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -19798,7 +19762,7 @@
       "AI / Coding & Dev-Tools"
     ],
     "notes": [
-      "A root API key is generated during install and printed at the end of the setup; it is also stored as server.root_api_key in /opt/openviking_data/ov.conf."
+      "A root API key is generated during install - it is stored as server.root_api_key in /opt/openviking_data/ov.conf."
     ],
     "warnings": [
       "Model API keys must be configured in /opt/openviking_data/ov.conf (embedding and VLM sections) before the server can store or retrieve memory. Edit the file and restart the service afterwards."
@@ -19810,7 +19774,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -25828,7 +25792,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
@@ -29598,7 +29562,7 @@
     "updateable": true,
     "privileged": false,
     "has_arm": false,
-    "is_dev": true,
+    "is_dev": false,
     "execute_in": [
       "lxc"
     ],
